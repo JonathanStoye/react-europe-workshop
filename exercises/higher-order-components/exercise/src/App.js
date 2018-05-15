@@ -28,6 +28,12 @@ import "./App.css";
 // Uncomment if you're hitting the stretch goal
 // import throttle from 'lodash.throttle'
 
+
+const withScreenDimensions = (Component) => (props) => {
+  return <Component {...props} />
+}
+
+
 class App extends Component {
   state = {
     width: window.innerWidth,
@@ -61,4 +67,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withScreenDimensions(App);
