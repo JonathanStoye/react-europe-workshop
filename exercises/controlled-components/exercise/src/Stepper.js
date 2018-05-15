@@ -70,45 +70,18 @@ export default class Stepper extends Component {
   static Next = StepperNext;
   static Previous = StepperPrevious;
   static ActiveStep = ActiveStep;
-  state = {
-    // Assume that the first step is always active at first.
-    activeStepIndex: 0
-  };
 
   findActiveStep = step => {
-    return step.id === this.state.activeStepId;
-  };
-
-  stepForward = () => {
-    this.setState(state => {
-      return {
-        activeStepIndex: state.activeStepIndex + 1
-      };
-    });
-  };
-
-  stepBack = () => {
-    this.setState(state => {
-      return {
-        activeStepIndex: state.activeStepIndex - 1
-      };
-    });
-  };
-
-  goToIndex = index => {
-    this.setState({ activeStepIndex: index });
+    return step.id === this.props.activeStepId;
   };
 
   getContext() {
-    const { steps } = this.props;
-    const { activeStepIndex } = this.state;
-    const hasPrevious = activeStepIndex > 0;
-    const hasNext = activeStepIndex < steps.length - 1;
+    const { steps, activeStepIndex, hasNext, hasPrevious, onChange } = this.props;
     return {
       activeStepIndex: activeStepIndex,
-      stepForward: this.stepForward,
-      stepBack: this.stepBack,
-      goToIndex: this.goToIndex,
+      stepForward: () => onChange(activeStepIndex + 1),
+      stepBack: () => onChange(activeStepIndex - 1),
+      goToIndex: onChange,
       steps,
       hasNext,
       hasPrevious

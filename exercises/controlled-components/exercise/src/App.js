@@ -27,7 +27,7 @@
  *
  */
 
-import React from "react";
+import React, { Component } from "react";
 import Stepper from "./Stepper";
 import "./App.css";
 
@@ -46,12 +46,30 @@ const steps = [
   },
 ];
 
-const App = () => (
-  <Stepper steps={steps}>
-    <Stepper.Status />
-    <Stepper.ActiveStep />
-    <Stepper.Controls />
-  </Stepper>
-);
+class App extends Component {
+  state = {
+    activeStepIndex: 0,
+  }
+
+  onChange = (index) => {
+    this.setState(() => ({
+      activeStepIndex: index
+    }))
+  }
+
+  render() {
+    const { activeStepIndex } = this.state;
+    const hasNext = activeStepIndex < steps.length - 1;
+    const hasPrevious = activeStepIndex > 0;
+
+    return (
+      <Stepper steps={steps} onChange={this.onChange} activeStepIndex={activeStepIndex} hasNext={hasNext} hasPrevious={hasPrevious}>
+        <Stepper.Status />
+        <Stepper.ActiveStep />
+        <Stepper.Controls />
+      </Stepper>
+    );
+  }
+}
 
 export default App;
