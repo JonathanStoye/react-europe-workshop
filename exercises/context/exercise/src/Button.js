@@ -1,28 +1,18 @@
 import React from 'react';
+import { Consumer as ColorConsumer } from './ColorContext'
 
-import { Consumer } from './Context';
-import { Consumer as NotificationConsumer } from './NotificationContext';
-
-const Button = ({ children }) => (
-  <NotificationConsumer>
-    {({ add }) => {
-      return (
-        <Consumer>
-          {({ primaryColor }) => (
-            <button
-              className="button"
-              onClick={() => {
-                add('OMG WE USE COOKIES AND HAVE TO TELL YOU LOL');
-              }}
-              style={{ backgroundColor: primaryColor }}
-            >
-              {children}
-            </button>
-          )}
-        </Consumer>
-      );
+export const Button = ({ children, onClick, color }) => (
+  <ColorConsumer>
+    {({ primaryColor, setPrimaryColor }) => {
+      const click = () => {
+        if (onClick) {
+          onClick()
+        }
+        if (color) {
+          setPrimaryColor(color)
+        }
+      }
+      return <button className="button" onClick={click} style={{ backgroundColor: primaryColor }}>{children}</button>
     }}
-  </NotificationConsumer>
-);
-
-export default Button;
+  </ColorConsumer >
+)

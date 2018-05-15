@@ -1,51 +1,70 @@
 import React, { Component } from 'react';
-
-import Header from './Header';
-import Heading from './Heading';
-import Button from './Button';
-import Notification from './Notification';
-
-import { Provider } from './Context';
+import { Provider as ColorProvider, defaultColor } from './ColorContext';
 import { Provider as NotificationProvider } from './NotificationContext';
+import { Header } from './Header';
+import { Heading } from './Heading';
+import { NotificationButton } from './NotificationButton'
+import { Notification } from './Notification'
+import { Button } from './Button'
 
 class App extends Component {
   state = {
     notifications: [],
-  };
-  addNotification = n => {
-    let notes = [...this.state.notifications];
-    notes.push(n);
+    primaryColor: '#20bf6b'
+  }
+
+  addNotification = (notification) => {
     this.setState({
-      notifications: notes,
-    });
-  };
-  removeNotification = idx => {
-    let notes = [...this.state.notifications];
-    notes.splice(idx, 1);
+      notifications: [
+        ...this.state.notifications,
+        notification,
+      ]
+    })
+  }
+
+  removeNotification = (index) => {
+    let notifications = [...this.state.notifications]
+    notifications.splice(index, 1)
     this.setState({
-      notifications: notes,
-    });
-  };
-  contextValue = {
+      notifications
+    })
+  }
+
+  setPrimaryColor = (primaryColor) => {
+    this.setState({
+      primaryColor
+    })
+  }
+
+  notificationContext = {
     add: this.addNotification,
     remove: this.removeNotification,
-  };
+  }
+
+  getColorContext = () => ({
+    primaryColor: this.state.primaryColor,
+    setPrimaryColor: this.setPrimaryColor,
+  })
+
   render() {
     return (
-      <NotificationProvider value={this.contextValue}>
-        <Provider value={{ primaryColor: '#fd79a8' }}>
+      <NotificationProvider value={this.notificationContext}>
+        <ColorProvider value={this.getColorContext()}>
+          {this.state.notifications.map((notification, index) => <Notification key={index} index={index}>{notification}</Notification>)}
           <div>
-            {this.state.notifications.map((n, idx) => (
-              <Notification idx={idx}>{n}</Notification>
-            ))}
-            <Header>BAD WEBSITE</Header>
-            <div style={{ padding: 20 }}>
-              <Heading>Bad Content</Heading>
-              <p>This is a terrible website. It's disgustingly bad.</p>
-              <Button>NOTIFY</Button>
+            <Header>Some Header</Header>
+            <Button color={'red'}>red</Button>
+            <Button color={'#20bf6b'}>green</Button>
+            <Button color={defaultColor}>default</Button>
+            <div style={{ padding: 40 }}>
+              <Heading>Some Page Content</Heading>
+              <p>Some basic text is written here to make you aware of important stuff.</p>
+              <NotificationButton>
+                Notify
+              </NotificationButton>
             </div>
           </div>
-        </Provider>
+        </ColorProvider>
       </NotificationProvider>
     );
   }

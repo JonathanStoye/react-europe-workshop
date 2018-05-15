@@ -1,15 +1,9 @@
 import React from 'react';
 
-import { Consumer } from './Context';
+import { Consumer } from './ColorContext'
 
-const Heading = ({ children }) => (
+export const Heading = ({ children }) => (
   <Consumer>
-    {({ primaryColor }) => (
-      <h1 className="heading" style={{ color: primaryColor }}>
-        {children}
-      </h1>
-    )}
+    {({ primaryColor }) => <div className="heading" style={{ color: primaryColor }}>{children}</div>}
   </Consumer>
-);
-
-export default Heading;
+)

@@ -5,7 +5,14 @@ body {
 }
 
 .header {
-  padding: 40px;
+  padding: 60px;
   color: white;
-  font-size: 36px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.heading {
+  font-size: 26px;
+  font-weight: medium;
+  font-weight: bold;
 }
