@@ -5,26 +5,11 @@ export default class ChatList extends Component {
   listRef = null;
   scrollOffset = null;
 
-  state = {};
-
-  /**
-   * FIX ME
-   *
-   * Initialzing state in componentWillMount is
-   * a bad idea. It might get called multiple times
-   * and then we'd be setting state more often than
-   * we need to.
-   *
-   * Refactor this so that the state is set when
-   * this.state is first initialized (look up!)
-   */
-  componentWillMount() {
-    this.setState({
-      filteredMessages: this.props.filter
-        ? filterMessages(this.props.messages)
-        : []
-    });
-  }
+  state = {
+    filteredMessages: this.props.filter
+      ? filterMessages(this.props.messages)
+      : []
+  };
 
   /**
    * FIX ME
@@ -72,30 +57,20 @@ export default class ChatList extends Component {
     }
   }
 
-  /**
-   * FIX ME
-   *
-   * componentWillReceiveProps is being deprecated.
-   * There's a new static lifecycle method called
-   * getDerivedStateFromProps.
-   *
-   * Refactor this to use getDerivedStateFromProps
-   * instead.
-   */
-  componentWillReceiveProps(nextProps) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     // Only update the filtered messages if a filter
     // actually exists...
     if (
       nextProps.filter &&
-      // Only filter again if the filter changed...
-      (nextProps.filter !== this.props.filter ||
-        // ...or the messages changed.
-        nextProps.messages !== this.props.messages)
+      (nextProps.filter !== prevState.filter ||
+        nextProps.messages !== prevState.messages)
     ) {
-      this.setState({
+      // Only filter again if the filter changed... // ...or the messages changed.
+      return {
         filteredMessages: filterMessages(nextProps.messages, nextProps.filter)
-      });
+      };
     }
+    return null;
   }
 
   render() {

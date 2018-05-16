@@ -31,56 +31,15 @@ export default class App extends Component {
   state = {
     loading: true,
     messages: [],
-    pendingMessage: "",
+    pendingMessage: localStorage.getItem("pendingMessage"),
     messageFilter: ""
   };
 
-  componentWillMount() {
-    /**
-     * FIX ME
-     *
-     * componentWillMount is a "render" phase lifecycle
-     * method, which means that it may get called
-     * multiple times for a single update. This can
-     * lead to this async request being called many
-     * times, which can waste data and time.
-     *
-     * Move this into the "commit" phase lifecycle
-     * method that gets called when a component
-     * mounts.
-     */
+  componentDidMount() {
     this._messageRequest = MessageDataSource.getData().then(messages => {
       this.setState({ messages, loading: false });
     });
-    /**
-     * FIX ME
-     *
-     * Creating subscriptions in a render phase
-     * lifecycle is unsafe, and may lead to memory
-     * leaks.
-     *
-     * Move this into the "commit" phase lifecycle
-     * method that gets called when a component
-     * mounts.
-     *
-     * STRETCH GOAL
-     *
-     * Check out the create-subscription package.
-     * Can you implement a version of this using
-     * that package? (its already installed)
-     */
     this._unsubscribe = MessageDataSource.subscribe(this.onNewRemoteMessage);
-    /**
-     * FIX ME
-     *
-     * There's no reason to initialize state values
-     * int componentWillMount. Move this to where
-     * this.state is initialized.
-     *
-     */
-    this.setState({
-      pendingMessage: localStorage.getItem("pendingMessage")
-    });
   }
 
   componentWillUnmount() {
