@@ -30,34 +30,31 @@
  *   Fallback,
  *   (error, stack) => {...}
  * )
- */ 
+ */
 
-
-import React, {Component} from 'react';
+import React, { Component } from "react";
 // Where our message data comes from.
-import MessageDataSource from './MessageDataSource';
+import MessageDataSource from "./MessageDataSource";
 // Chat components!
-import ChatList from './ChatList';
-import ChatInput from './ChatInput';
-import ChatFilterNavbar from './ChatFilterNavbar';
-import './App.css';
+import ChatList from "./ChatList";
+import ChatInput from "./ChatInput";
+import ChatFilterNavbar from "./ChatFilterNavbar";
+import "./App.css";
 
-export default class App extends Component {
+import { withErrorBoundary } from "./ErrorBoundary";
+
+class App extends Component {
   state = {
     messages: [],
-    pendingMessage: localStorage.getItem('pendingMessage'),
-    messageFilter: '',
+    pendingMessage: localStorage.getItem("pendingMessage"),
+    messageFilter: ""
   };
 
   componentDidMount() {
-    this._messageRequest = MessageDataSource.getData().then(
-      messages => {
-        this.setState({messages});
-      },
-    );
-    this._unsubscribe = MessageDataSource.subscribe(
-      this.onNewRemoteMessage,
-    );
+    this._messageRequest = MessageDataSource.getData().then(messages => {
+      this.setState({ messages });
+    });
+    this._unsubscribe = MessageDataSource.subscribe(this.onNewRemoteMessage);
   }
 
   componentWillUnmount() {
@@ -67,31 +64,31 @@ export default class App extends Component {
 
   onChatInputChange = event => {
     this.setState({
-      pendingMessage: event.target.value,
+      pendingMessage: event.target.value
     });
   };
 
   onMessageFilterChange = messageFilter => {
-    this.setState({messageFilter});
+    this.setState({ messageFilter });
   };
 
   onNewRemoteMessage = message => {
-    const {messages} = this.state;
+    const { messages } = this.state;
     this.setState({
-      messages: [...messages, message],
+      messages: [...messages, message]
     });
   };
 
   onNewLocalMessage = () => {
-    const {pendingMessage} = this.state;
+    const { pendingMessage } = this.state;
     const message = {
-      author: 'Me',
+      author: "Me",
       message: pendingMessage,
-      id: Math.random(),
+      id: Math.random()
     };
     this.onNewRemoteMessage(message);
     this.setState({
-      pendingMessage: '',
+      pendingMessage: ""
     });
   };
 
@@ -100,17 +97,11 @@ export default class App extends Component {
   };
 
   render() {
-    const {
-      messages,
-      pendingMessage,
-      messageFilter,
-    } = this.state;
+    const { messages, pendingMessage, messageFilter } = this.state;
 
     return (
       <div className="App">
-        <ChatFilterNavbar
-          onFilterChange={this.onMessageFilterChange}
-        />
+        <ChatFilterNavbar onFilterChange={this.onMessageFilterChange} />
         <div className="container">
           <ChatList
             onScrollOffsetChange={this.onScrollOffsetChange}
@@ -127,3 +118,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default withErrorBoundary(App, console.log, () => <h1>ERROR</h1>);

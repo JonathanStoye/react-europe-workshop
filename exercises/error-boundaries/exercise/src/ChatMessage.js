@@ -16,5 +16,4 @@ const ChatMessage = ({ author, message }) => (
     <p className="mb-1">{message}</p>
   </div>
 );
-
 export default ChatMessage;

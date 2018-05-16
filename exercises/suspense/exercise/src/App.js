@@ -23,13 +23,35 @@
  */
 
 import React, { Component } from "react";
+import { createCache, createResource } from "simple-cache-provider";
 import Spinner from "./Spinner";
 import "./App.css";
+
+// Returns a Promise that resolves when
+// the image is loaded.
+const loadImage = src => {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = resolve;
+    img.src = src;
+  });
+};
+
+const cache = createCache();
+
+const ImageResource = createResource(loadImage);
+
+const Image = ({ src, ...props }) => {
+  ImageResource.read(cache, src);
+  return <img {...props} />;
+};
 
 // A list of images inside a container
 const ImageList = ({ images }) => (
   <div className="container">
-    {images.map(image => <img className="dog-pic" src={image} />)}
+    {images.map((image, index) => (
+      <Image key={`${image} ${index}`} className="dog-pic" src={image} />
+    ))}
   </div>
 );
 
@@ -85,10 +107,11 @@ export default class App extends Component {
 function DogBreedButtons({ setActive, active }) {
   return (
     <div style={{ marginBottom: 50 }} className="btn-group">
-      {["pug", "boxer", "dachshund"].map(breed => {
+      {["pug", "boxer", "dachshund"].map((breed, index) => {
         const isActive = breed === active;
         return (
           <button
+            key={index}
             onClick={() => setActive(breed)}
             className={`btn btn-outline-primary ${isActive && "active"}`}
           >

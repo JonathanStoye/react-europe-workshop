@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-export default class ChatInput extends Component {
+class ChatInput extends Component {
   /**
    * If you must perform side-effects after an update,
    * do so in componentDidUpdate.
@@ -38,3 +38,4 @@ export default class ChatInput extends Component {
     );
   }
 }
+export default ChatInput;

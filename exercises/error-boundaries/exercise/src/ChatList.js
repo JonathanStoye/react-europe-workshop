@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import ChatMessage from "./ChatMessage";
+import { withErrorBoundary } from "./ErrorBoundary";
 
+const ChatMessageWithErrorBoundary = withErrorBoundary(
+  ChatMessage,
+  console.log,
+  () => <h1>ERROR</h1>
+);
 export default class ChatList extends Component {
   listRef = null;
   scrollOffset = null;
@@ -77,7 +83,12 @@ export default class ChatList extends Component {
         className="list-group list-group-flush"
       >
         {activeMessages.map(message => (
-          <ChatMessage key={message.id} {...message} />
+          <ChatMessageWithErrorBoundary
+            key={message.id}
+            {...message}
+            onError={console.warn}
+            Fallback={() => <h1>ERRORERRORERROR</h1>}
+          />
         ))}
       </div>
     );
