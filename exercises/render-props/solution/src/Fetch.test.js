@@ -1,88 +1,70 @@
-import React from 'react';
-import renderer from 'react-test-renderer';
-import Fetch from './Fetch';
+import React from "react";
+import renderer from "react-test-renderer";
+import Fetch from "./Fetch";
 
 global.fetch = jest.fn();
 
-describe('Fetch Component', () => {
-  global.fetch.mockReturnValue(
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve({
-          json: () => Promise.resolve('HEY'),
-        });
-      }, 200);
-    })
-  );
-  it('renders a snapshot that is good', () => {
+describe("Fetch Commponent", () => {
+  it("renders a snapshot that is good", () => {
+    global.fetch.mockReturnValue(Promise.resolve({}));
     const tree = renderer
-      .create(
-        <Fetch url="http://google.com">
-          {args => <p style={{ color: !args.loading ? 'blue' : 'red' }}>YAY</p>}
-        </Fetch>
-      )
+      .create(<Fetch url="https://something.com">{args => null}</Fetch>)
       .toJSON();
-
     expect(tree).toMatchSnapshot();
   });
 
-  it('starts with loading equals true', () => {
+  it("start with loading === true", () => {
     let result;
     const tree = renderer.create(
-      <Fetch url="whatever">
+      <Fetch>
         {({ loading }) => {
           result = loading;
           return null;
         }}
       </Fetch>
     );
-
     expect(result).toBe(true);
   });
 
-  it('should do data', done => {
-    let result;
-    const tree = renderer.create(
-      <Fetch url="whatever">
-        {data => {
-          console.log(data);
-          result = data;
-          return null;
-        }}
-      </Fetch>
-    );
-
-    expect(result.loading).toBe(true);
-    setTimeout(() => {
-      expect(result.data).toBe('HEY');
-      done();
-    }, 300);
-  });
-
-  it('should surface request errors', done => {
+  it("should do data", done => {
     global.fetch.mockReturnValue(
       new Promise((resolve, reject) => {
-        setTimeout(() => {
-          reject('Noooooooo');
-        }, 200);
+        setTimeout(() => resolve({ json: () => "DATA" }), 1);
       })
     );
-
     let result;
-
     const tree = renderer.create(
-      <Fetch url="whatever">
-        {data => {
-          console.log(data);
+      <Fetch>
+        {({ data }) => {
           result = data;
           return null;
         }}
       </Fetch>
     );
-
     setTimeout(() => {
-      expect(result.error).toBe('Noooooooo');
+      expect(result).toBe("DATA");
       done();
-    }, 300);
+    }, 2);
+  });
+
+  it("should do error", done => {
+    global.fetch.mockReturnValue(
+      new Promise((resolve, reject) => {
+        setTimeout(() => reject("ERROR"), 1);
+      })
+    );
+    let result;
+    const tree = renderer.create(
+      <Fetch>
+        {({ error }) => {
+          result = error;
+          return null;
+        }}
+      </Fetch>
+    );
+    setTimeout(() => {
+      expect(result).toBe("ERROR");
+      done();
+    }, 2);
   });
 });

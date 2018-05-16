@@ -1,37 +1,25 @@
-import React, { Component } from 'react';
-
-
-const fakeFetch = url => new Promise(resolve => {
-  setTimeout(() => {
-    resolve('Go Zen')
-  }, 1000)
-})
+import React, { Component } from "react";
 
 class Fetch extends Component {
   state = {
     loading: true,
     error: null,
-    data: null,
-  }
+    data: null
+  };
 
   componentDidMount() {
-    fakeFetch(this.props.url)
-      .then((data) => {
-        this.setState({
-          data,
-          loading: false,
-        })
-      })
-      .catch((error) => {
+    fetch(this.props.url)
+      .then(res => res.json())
+      .catch(error => {
         this.setState({
           error,
-          loading: false,
-        })
-      })
+          loading: false
+        });
+      });
   }
 
   render() {
-    return this.props.children(this.state)
+    return this.props.children(this.state);
   }
 }
 
